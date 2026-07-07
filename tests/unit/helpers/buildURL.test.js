@@ -143,6 +143,30 @@ describe('helpers::buildURL', () => {
     expect(buildURL('/foo', params, customSerializer)).toEqual('/foo?rendered');
   });
 
+  it('should strip leading ? from custom serialize result', () => {
+    expect(
+      buildURL('/users', { page: 1 }, { serialize: () => '?page=1' })
+    ).toEqual('/users?page=1');
+  });
+
+  it('should strip leading ? from custom serialize result when URL has existing query', () => {
+    expect(
+      buildURL('/users?active=1', { page: 1 }, { serialize: () => '?page=1' })
+    ).toEqual('/users?active=1&page=1');
+  });
+
+  it('should strip leading & from custom serialize result', () => {
+    expect(
+      buildURL('/users', { page: 1 }, { serialize: () => '&page=1' })
+    ).toEqual('/users?page=1');
+  });
+
+  it('should not alter serialize result without leading separator', () => {
+    expect(
+      buildURL('/users', { page: 1 }, { serialize: () => 'page=1' })
+    ).toEqual('/users?page=1');
+  });
+
   it('should ignore inherited serializer options', () => {
     let serializeInvoked = false;
     let encodeInvoked = false;
